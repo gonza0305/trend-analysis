@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      # Docker daemon startup
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay&
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"      
+  build:
+    commands:
+      # Adding our own job libraries
+      - mkdir -p ./build
+      - rsync -arq --exclude=build --exclude=bin --exclude=tests --exclude=.idea --exclude=.git --exclude=scripts --exclude=.gitignore --exclude=archive --delete . ./build/src
+      - cd ./build/src
+      - mv trend-analysis/main.py ../
+      - cd trend-analysis
+      - zip -qr9 -db ../../resources.zip ./*
+      - cd ../..
+      - rm -rf src
+      - cd ..
+      - aws s3 cp build/ s3://trend-analysis-dev/image/ --recursive
+artifacts:
+  files:
+    - build/*
+    - resources.zip
+    - main.py
