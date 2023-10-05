@@ -200,6 +200,87 @@ if __name__ == '__main__':
 
     logger.info("Called with arguments: %s" % args)
     logger.info("Called with unknown arguments: %s" % unknown)
+
+    from pyspark import SparkContext
+    from pyspark.sql import SparkSession
+    from pyspark.sql.functions import col, split, explode, window
+    from pyspark.sql.window import Window
+    from pyspark.sql.types import StringType
+    from datetime import datetime, timedelta
+
+    # Initialize Spark
+    sc = SparkContext("local", "TwitterTrendingTopics")
+    spark = SparkSession(sc)
+
+    # Load the Twitter data into a DataFrame (replace 'twitter_data.csv' with your data source)
+    twitter_data = spark.read.csv('twitter_data.csv', header=True)
+
+    # Define the schema of the DataFrame
+    twitter_data = twitter_data.withColumnRenamed("text", "tweet_text")
+    twitter_data = twitter_data.withColumnRenamed("created_at", "timestamp")
+
+    # Filter and preprocess the data to extract relevant information
+    twitter_data = twitter_data.select("timestamp", "tweet_text")
+
+    # Define the start and end dates for the last week
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=7)
+
+    # Filter tweets from the last week
+    twitter_data = twitter_data.filter((col("timestamp") >= start_date) & (col("timestamp") <= end_date))
+
+    # Split tweet text into words
+    twitter_data = twitter_data.withColumn("words", split(col("tweet_text"), "\\s+"))
+
+    # Explode the array of words into individual rows
+    twitter_data = twitter_data.select("timestamp", explode(col("words")).alias("word"))
+
+    # Group by date and word, count the occurrences
+    twitter_data = twitter_data.groupBy("timestamp", "word").count()
+
+    # Calculate the slope of frequency of occurrence for each word
+    window_spec = Window.partitionBy("word").orderBy("timestamp")
+    twitter_data = twitter_data.withColumn("lag_count", col("count").lag().over(window_spec))
+    twitter_data = twitter_data.withColumn("slope", (col("count") - col("lag_count")) / 7)
+
+    # Find the top trending words
+    top_trending_words = twitter_data.filter(col("slope").isNotNull()) \
+        .orderBy("slope", ascending=False) \
+        .limit(10)
+
+    # Show the results
+    top_trending_words.show()
+    # Save the results to a flat file
+    top_trending_words.select("word", "slope").write.mode("overwrite").csv("trending_topics_result.csv")
+
+    # User-provided topic
+    user_topic = "your_user_provided_topic"
+
+    # Find the most trending topic from the dataset
+    most_trending_topic = top_trending_words.select("word").limit(1).collect()[0]["word"]
+
+    # Show the results
+    print("User-Provided Topic:", user_topic)
+    print("Most Trending Topic from Dataset:", most_trending_topic)
+
+    # Compare the trends of user-provided topic and most trending topic
+    user_topic_trend = top_trending_words.filter(col("word") == user_topic).select("slope").collect()
+    most_trending_topic_trend = top_trending_words.filter(col("word") == most_trending_topic).select("slope").collect()
+
+    if user_topic_trend and most_trending_topic_trend:
+        user_topic_slope = user_topic_trend[0]["slope"]
+        most_trending_topic_slope = most_trending_topic_trend[0]["slope"]
+
+        print("Trend Comparison:")
+        print(f"User-Provided Topic Slope: {user_topic_slope}")
+        print(f"Most Trending Topic Slope: {most_trending_topic_slope}")
+    else:
+        print("Topic not found in trending topics.")
+
+    # Stop Spark
+    spark.stop()
+
+
     args.previous_date = previous_date_with_data
     # Create a great expectation context
     ge_context = BaseDataContext(project_config=GreatExpectationsConfiguration(args.env).get_data_context_config())
