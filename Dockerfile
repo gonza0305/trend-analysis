@@ -1,19 +1,12 @@
-FROM --platform=linux/amd64 public.ecr.aws/amazonlinux/amazonlinux:2 AS base
+FROM python:3.10
 
-RUN yum install -y python3.7
+RUN apt-get update
 
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3.7 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+WORKDIR /src
 
-COPY requirements.txt /
-WORKDIR /
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-RUN python3.7 -m pip install --upgrade pip
-RUN python3.7 -m pip install -r requirements.txt
-RUN python3.7 -m pip install venv-pack
+COPY . .
 
-RUN mkdir /output && venv-pack -o /output/pyspark_venv.tar.gz
-
-FROM scratch AS export
-COPY --from=base /output/pyspark_venv.tar.gz /
+CMD [ "python", "trend-analysis/main.py" ]
