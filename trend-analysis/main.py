@@ -1,26 +1,11 @@
 import sys
-import os
 import logging
 import argparse
-import boto3
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from botocore.exceptions import ClientError
 import pandas as pd
-import numpy as np
-from datetime import datetime
-import json
-import re
 import os
 import io
-import traceback
-from multiprocessing import cpu_count
 import boto3
-from datetime import datetime
-from functools import partial
-from multiprocessing import Pool
-from pyathena import connect
-import matplotlib.pyplot as plt
+
 from configurations.great_expectations_configuration import GreatExpectationsConfiguration
 from validations.great_expectation_validation import GreatExpectationsValidation
 
