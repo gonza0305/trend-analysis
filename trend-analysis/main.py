@@ -1,5 +1,4 @@
 import sys
-import logging
 import argparse
 import os
 from pyspark.ml.feature import Tokenizer, StopWordsRemover
@@ -9,9 +8,6 @@ from datetime import datetime, timedelta
 
 
 # Init logger
-logging.basicConfig(format="%(asctime)s %(levelname)s python: %(message)s", datefmt="%y/%m/%d %H:%M:%S")
-logger = logging.getLogger(__name__)
-logger.info("Python version: " + sys.version)
 
 try:
     import pyspark
@@ -113,8 +109,7 @@ if __name__ == '__main__':
     parser.add_argument('--user_topic_1', required=True, default=None)
     parser.add_argument('--user_topic_2', required=True, default=None)
     args, unknown = parser.parse_known_args()
-    logger.info("Called with arguments: %s" % args)
-    logger.info("Called with unknown arguments: %s" % unknown)
+
     print("Called with arguments: %s" % args)
 
     bucket_name = f"trend-analysis-{args.env}"
