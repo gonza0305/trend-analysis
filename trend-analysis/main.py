@@ -1,26 +1,12 @@
-import json
 import sys
 import logging
 import argparse
-import pandas as pd
 import os
-import io
-import boto3
-from pyspark import SparkContext
 from pyspark.ml.feature import Tokenizer, StopWordsRemover
-from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, split, explode, window, lower, regexp_replace, to_timestamp, date_format, desc, \
     count, lit, first, sum
-from pyspark.sql.window import Window
-from pyspark.sql.types import StringType
 from datetime import datetime, timedelta
-# from configurations.great_expectations_configuration import GreatExpectationsConfiguration
-# from validations.great_expectation_validation import GreatExpectationsValidation
-from jsonschema import validate, ValidationError
 
-# from great_expectations.data_context import BaseDataContext
-# from great_expectations.checkpoint import Checkpoint
-# from model.sample_schema import sample_schema
 
 # Init logger
 logging.basicConfig(format="%(asctime)s %(levelname)s python: %(message)s", datefmt="%y/%m/%d %H:%M:%S")
