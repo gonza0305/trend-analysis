@@ -29,7 +29,7 @@ def get_spark_session():
     This method create a spark session base on execution type.
     :return: Spark Session
     """
-    local_execution = True  # This value can ONLY be True in local executions.
+    local_execution = False  # This value can ONLY be True in local executions.
     if local_execution:
         spark = (
             SparkSession.builder
