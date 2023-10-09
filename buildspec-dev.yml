@@ -13,20 +13,9 @@ phases:
   build:
     commands:
       # Adding our own job libraries
-      - mkdir -p ./build
-      - rsync -arq --exclude=build --exclude=bin --exclude=tests --exclude=.idea --exclude=.git --exclude=scripts --exclude=.gitignore --exclude=archive --delete . ./build/src
-      - cd ./build/src
-      - mv trend-analysis/main.py ../
-      - cd trend-analysis
-      - zip -qr9 -db ../../resources.zip ./*
-      - cd ../..
-      - rm -rf src
-      - cd ..
-      - aws s3 cp build/ s3://trend-analysis-dev/image/ --recursive
       # Repository URI should be defined inside the buildspec env variables (for dev/prod/test) in the AWS codebuild project
       - docker build -t dev-trend-analysis .
       - docker tag dev-trend-analysis:latest 377773544554.dkr.ecr.eu-west-1.amazonaws.com/dev-trend-analysis:latest
-
       #- docker build -t $REPOSITORY_URI:latest .
       #- docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
@@ -34,9 +23,8 @@ phases:
       #- docker push $REPOSITORY_URI:latest
       #- docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push 377773544554.dkr.ecr.eu-west-1.amazonaws.com/dev-trend-analysis:latest
-      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - docker push 377773544554.dkr.ecr.eu-west-1.amazonaws.com/dev-trend-analysis:$IMAGE_TAG
 artifacts:
   files:
-    - build/*
-    - resources.zip
-    - main.py
+      - imageDetail.json
+
