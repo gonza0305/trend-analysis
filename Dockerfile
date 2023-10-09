@@ -1,7 +1,5 @@
 FROM apache/spark-py:v3.4.0
 
-RUN apt-get update
-
 RUN pip install pyspark
 
 WORKDIR /src
