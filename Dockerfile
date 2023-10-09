@@ -1,4 +1,4 @@
-FROM apache/spark-py:v3.4.0
+FROM bitnami/spark
 
 WORKDIR /src
 
