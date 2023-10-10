@@ -6,7 +6,7 @@ ARG SPARK_VERSION=3.0.1
 
 ARG AWS_SDK_VERSION=1.11.375
 ARG SPARK_PACKAGE=spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz
-ARG SPARK_PACKAGE_URL=https://downloads.apache.org/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}
+ARG SPARK_PACKAGE_URL=https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}
 ARG HADOOP_JAR=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar
 ARG AWS_SDK_JAR=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/${AWS_SDK_VERSION}/aws-java-sdk-bundle-${AWS_SDK_VERSION}.jar
 
