@@ -41,7 +41,7 @@ def get_spark_session():
             .config('spark.jars.packages', 'org.apache.hadoop:hadoop-aws:3.2.0')
             .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
             # .config("spark.driver.maxResultSize", "5g")
-            # .config("spark.sql.legacy.timeParserPolicy", "LEGACY")
+            .config("spark.sql.legacy.timeParserPolicy", "LEGACY")
             # .config("spark.sql.autoBroadcastJoinThreshold", 10485760)
             .enableHiveSupport()
             .getOrCreate()
