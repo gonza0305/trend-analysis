@@ -13,8 +13,7 @@ ARG AWS_SDK_JAR=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle
 # Install dependencies
 
 RUN apk update
-RUN apk add openjdk8-jre bash snappy
-RUN apt-get install -y python3
+RUN apk add openjdk8-jre bash snappy python3
 
 # Install spark
 
