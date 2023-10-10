@@ -25,5 +25,3 @@ phases:
       - docker push 377773544554.dkr.ecr.eu-west-1.amazonaws.com/dev-trend-analysis:latest
 artifacts:
   files:
-      - imageDetail.json
-
