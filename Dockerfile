@@ -13,8 +13,8 @@ ARG AWS_SDK_JAR=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle
 # Install dependencies
 
 RUN apk update
-RUN apk add openjdk8-jre bash snappy python3
-
+RUN apk add openjdk8-jre bash snappy
+RUN apk add --update python3
 # Install spark
 
 ADD ${SPARK_PACKAGE_URL} /tmp/
@@ -34,5 +34,6 @@ RUN rm -rfv /tmp/*
 
 # Add Spark tools to path
 ENV PATH="/opt/spark/bin/:${PATH}"
+ENV PATH="/usr/bin:${PATH}"
 
 CMD [ "python", "trend-analysis/main.py" ]
