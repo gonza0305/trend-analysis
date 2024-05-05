@@ -15,3 +15,6 @@ What constitutes a word or phrase and whether the distinction between the two sh
 Spark job which produces historical trend comparison for last week. 
 The output is written in a flat file with two line result, each line should start with the topic and their historical trend for last 7 days.
 
+
+### AWS integration
+Pushing the branch into the project deploys the project to AWS. CodeBuild is activated, which creates the DockerImage of the project, which is stored in ECR and we can then run it in ECS.
